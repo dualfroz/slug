@@ -346,6 +346,23 @@ func TestSlugMakeSmartTruncate(t *testing.T) {
 	}
 }
 
+func TestSlugMakeNonSmartNoMaxLength(t *testing.T) {
+	// MaxLength == 0 must not shorten the slug: the non-smart path truncated
+	// to slug[:0] because len(slug) >= 0 always holds.
+	defer func() {
+		EnableSmartTruncate = true
+		MaxLength = 0
+	}()
+	EnableSmartTruncate = false
+	MaxLength = 0
+
+	got := Make("Hello World example")
+	want := "hello-world-example"
+	if got != want {
+		t.Errorf("Make(...) = %#v; want %#v", got, want)
+	}
+}
+
 func TestSlugMakeAppendTimestamp(t *testing.T) {
 	testCases := []struct {
 		in              string
